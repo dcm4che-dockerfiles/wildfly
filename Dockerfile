@@ -2,24 +2,18 @@ FROM java:openjdk-8
 
 # Set the WILDFLY_VERSION env variable
 ENV WILDFLY_VERSION=9.0.2.Final \
-    WILDFLY_SHA1=75738379f726c865d41e544e9b61f7b27d2853c7 \
     KEYCLOAK_VERSION=1.7.0.Final \
     JBOSS_HOME=/opt/wildfly \
     ADMIN_USER=admin \
-    ADMIN_PASSWORD=dcm4che
+    ADMIN_PASSWORD=admin
 
 # Add the WildFly distribution to /opt, and make wildfly the owner of the extracted tar content
 # Make sure the distribution is available from a well-known place
 RUN cd $HOME \
-    && curl -O https://download.jboss.org/wildfly/$WILDFLY_VERSION/wildfly-$WILDFLY_VERSION.tar.gz \
-    && curl -O http://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloak-overlay-$KEYCLOAK_VERSION.tar.gz \
-    && curl -O http://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/adapters/keycloak-oidc/keycloak-wildfly-adapter-dist-$KEYCLOAK_VERSION.tar.gz \
-    && sha1sum wildfly-$WILDFLY_VERSION.tar.gz | grep $WILDFLY_SHA1 \
-    && tar xf wildfly-$WILDFLY_VERSION.tar.gz \
+    && curl https://download.jboss.org/wildfly/$WILDFLY_VERSION/wildfly-$WILDFLY_VERSION.tar.gz | tar xz \
     && mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
-    && tar xf keycloak-overlay-$KEYCLOAK_VERSION.tar.gz -C $JBOSS_HOME \
-    && tar xf keycloak-wildfly-adapter-dist-$KEYCLOAK_VERSION.tar.gz -C $JBOSS_HOME \
-    && rm *.tar.gz \
+    && curl http://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloak-overlay-$KEYCLOAK_VERSION.tar.gz | tar xz -C $JBOSS_HOME \
+    && curl http://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/adapters/keycloak-oidc/keycloak-wildfly-adapter-dist-$KEYCLOAK_VERSION.tar.gz | tar xz -C $JBOSS_HOME \
     && $JBOSS_HOME/bin/add-user.sh $ADMIN_USER $ADMIN_PASSWORD --silent
 
 # Ensure signals are forwarded to the JVM process correctly for graceful shutdown
