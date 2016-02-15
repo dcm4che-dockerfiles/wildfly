@@ -1,8 +1,10 @@
-FROM java:openjdk-8
+FROM java:8-jre
 
 # Set the WILDFLY_VERSION env variable
 ENV WILDFLY_VERSION=9.0.2.Final \
     KEYCLOAK_VERSION=1.7.0.Final \
+    JBOSS_LOGMANAGER_EXT_VERSION=1.0.0.Alpha3 \
+    JBOSS_LOGMANAGER_JAR=jboss-logmanager-ext-${JBOSS_LOGMANAGER_EXT_VERSION}.jar \
     JBOSS_HOME=/opt/wildfly \
     ADMIN_USER=admin \
     ADMIN_PASSWORD=admin
@@ -14,7 +16,12 @@ RUN cd $HOME \
     && mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
     && curl http://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloak-overlay-$KEYCLOAK_VERSION.tar.gz | tar xz -C $JBOSS_HOME \
     && curl http://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/adapters/keycloak-oidc/keycloak-wildfly-adapter-dist-$KEYCLOAK_VERSION.tar.gz | tar xz -C $JBOSS_HOME \
+    && mkdir -p $JBOSS_HOME/modules/org/jboss/logmanager/ext/main \
+    && curl http://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/logmanager/jboss-logmanager-ext/$JBOSS_LOGMANAGER_EXT_VERSION/$JBOSS_LOGMANAGER_JAR \
+     -o $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/$JBOSS_LOGMANAGER_JAR \
     && $JBOSS_HOME/bin/add-user.sh $ADMIN_USER $ADMIN_PASSWORD --silent
+
+COPY module.xml $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/
 
 # Ensure signals are forwarded to the JVM process correctly for graceful shutdown
 ENV LAUNCH_JBOSS_IN_BACKGROUND true
