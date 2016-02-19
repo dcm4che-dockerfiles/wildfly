@@ -10,14 +10,6 @@ if [ "$1" = 'standalone.sh' ]; then
 	fi
 
 	set -- gosu wildfly "$@"
-elif [ "$1" = 'domain.sh' ]; then
-	if [ -d /tmp/domain ]; then
-		cp -r /tmp/domain/* $JBOSS_HOME/domain
-		rm -r /tmp/domain
-		chown -R wildfly:wildfly $JBOSS_HOME/domain
-	fi
-
-	set -- gosu wildfly "$@"
 fi
 
 exec "$@"

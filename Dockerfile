@@ -1,7 +1,7 @@
 FROM java:8-jre
 
 # explicitly set user/group IDs
-RUN groupadd -r wildfly --gid=1111 && useradd -r -g wildfly --uid=1111 wildfly
+RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 wildfly
 
 # grab gosu for easy step-down from root
 RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
@@ -30,6 +30,7 @@ RUN cd $HOME \
     && curl http://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/logmanager/jboss-logmanager-ext/$JBOSS_LOGMANAGER_EXT_VERSION/$JBOSS_LOGMANAGER_JAR \
      -o $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/$JBOSS_LOGMANAGER_JAR \
     && $JBOSS_HOME/bin/add-user.sh $ADMIN_USER $ADMIN_PASSWORD --silent \
+    && mv $JBOSS_HOME/standalone /tmp \
     && chown -R wildfly:wildfly $JBOSS_HOME
 
 COPY jboss-logmanager-ext-module.xml $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/module.xml
@@ -41,9 +42,6 @@ ENV JAVA_OPTS -Xms64m -Xmx512m -Djava.net.preferIPv4Stack=true -Djboss.modules.s
 ENV LAUNCH_JBOSS_IN_BACKGROUND true
 
 ENV PATH $JBOSS_HOME/bin:$PATH
-
-VOLUME $JBOSS_HOME/standalone
-VOLUME $JBOSS_HOME/domain
 
  # Expose the ports we're interested in
 EXPOSE 8080 9990
