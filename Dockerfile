@@ -29,20 +29,23 @@ RUN cd $HOME \
     && curl http://central.maven.org/maven2/org/jboss/logmanager/jboss-logmanager-ext/1.0.0.Alpha3/jboss-logmanager-ext-1.0.0.Alpha3.jar \
      -o $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/jboss-logmanager-ext-1.0.0.Alpha3.jar \
     && $JBOSS_HOME/bin/add-user.sh $ADMIN_USER $ADMIN_PASSWORD --silent \
-    && mv $JBOSS_HOME/standalone /tmp \
+    && mkdir /tmp/standalone  && mv $JBOSS_HOME/standalone/* /tmp/standalone \
     && chown -R wildfly:wildfly $JBOSS_HOME
 
 COPY jboss-logmanager-ext-module.xml $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/module.xml
 
 # Default configuration: can be overridden at the docker command line
 ENV JAVA_OPTS -Xms64m -Xmx512m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
+ENV CHOWN_WILDFLY=
 
 # Ensure signals are forwarded to the JVM process correctly for graceful shutdown
 ENV LAUNCH_JBOSS_IN_BACKGROUND true
 
 ENV PATH $JBOSS_HOME/bin:$PATH
 
- # Expose the ports we're interested in
+VOLUME /opt/wildfly/standalone
+
+# Expose the ports we're interested in
 EXPOSE 8080 9990
 
 COPY docker-entrypoint.sh /
