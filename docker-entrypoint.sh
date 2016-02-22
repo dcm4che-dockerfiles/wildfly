@@ -6,7 +6,6 @@ if [ "$1" = 'standalone.sh' ]; then
 	if [ -d /tmp/standalone ]; then
 		cp -r /tmp/standalone/* $JBOSS_HOME/standalone
 		rm -r /tmp/standalone
-		chown -R wildfly:wildfly $JBOSS_HOME/standalone
 		if [ -f $JBOSS_HOME/bin/configure ]; then
 			. $JBOSS_HOME/bin/configure
 		fi
@@ -15,6 +14,7 @@ if [ "$1" = 'standalone.sh' ]; then
 				chown -R wildfly:wildfly $f
 			done
 		fi
+		chown -R wildfly:wildfly $JBOSS_HOME
 	fi
 
 	set -- gosu wildfly "$@"
