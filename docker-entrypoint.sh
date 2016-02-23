@@ -3,9 +3,8 @@
 set -e
 
 if [ "$1" = 'standalone.sh' ]; then
-	if [ -d /tmp/standalone ]; then
-		cp -r /tmp/standalone/* $JBOSS_HOME/standalone
-		rm -r /tmp/standalone
+	if [ ! -d $JBOSS_HOME/standalone/deployments ]; then
+		cp -r /docker-entrypoint.d/standalone/* $JBOSS_HOME/standalone
 		if [ -f $JBOSS_HOME/bin/configure ]; then
 			. $JBOSS_HOME/bin/configure
 		fi

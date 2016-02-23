@@ -29,7 +29,7 @@ RUN cd $HOME \
     && curl http://central.maven.org/maven2/org/jboss/logmanager/jboss-logmanager-ext/1.0.0.Alpha3/jboss-logmanager-ext-1.0.0.Alpha3.jar \
      -o $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/jboss-logmanager-ext-1.0.0.Alpha3.jar \
     && $JBOSS_HOME/bin/add-user.sh $ADMIN_USER $ADMIN_PASSWORD --silent \
-    && mkdir /tmp/standalone  && mv $JBOSS_HOME/standalone/* /tmp/standalone
+    && mkdir -p /docker-entrypoint.d/standalone  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d/standalone
 
 COPY jboss-logmanager-ext-module.xml $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/module.xml
 
