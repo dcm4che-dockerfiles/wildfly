@@ -16,11 +16,10 @@ if [ "$1" = 'standalone.sh' ]; then
 		fi
 	done
 	if [ ! -f $JBOSS_HOME/standalone/chown.done ]; then
+		touch $JBOSS_HOME/standalone/chown.done
 		for f in $WILDFLY_CHOWN; do
 			chown -R wildfly:wildfly $f
 		done
-		touch $JBOSS_HOME/standalone/chown.done
-		chown wildfly:wildfly $JBOSS_HOME/standalone/chown.done
 	fi
 
 	set -- gosu wildfly "$@"

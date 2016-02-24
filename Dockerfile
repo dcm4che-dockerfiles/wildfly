@@ -33,13 +33,11 @@ RUN cd $HOME \
 
 COPY jboss-logmanager-ext-module.xml $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/module.xml
 
-RUN chown -R wildfly:wildfly $JBOSS_HOME
-
 # Default configuration: can be overridden at the docker command line
 ENV JAVA_OPTS -Xms64m -Xmx512m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
-ENV WILDFLY_STANDALONE configuration deployments lib tmp
+ENV WILDFLY_STANDALONE configuration deployments
 ENV WILDFLY_INIT=
-ENV WILDFLY_CHOWN=
+ENV WILDFLY_CHOWN $JBOSS_HOME/standalone
 
 # Ensure signals are forwarded to the JVM process correctly for graceful shutdown
 ENV LAUNCH_JBOSS_IN_BACKGROUND true
