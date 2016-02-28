@@ -14,7 +14,8 @@ RUN arch="$(dpkg --print-architecture)" \
     && chmod +x /usr/local/bin/gosu
 
 ENV WILDFLY_VERSION=9.0.2.Final \
-    KEYCLOAK_VERSION=1.7.0.Final \
+    KEYCLOAK_VERSION=1.9.0.Final \
+    LOGSTASH_GELF_VERSION=1.8.0 \
     JBOSS_HOME=/opt/wildfly \
     ADMIN_USER=admin \
     ADMIN_PASSWORD=admin
@@ -25,13 +26,14 @@ RUN cd $HOME \
     && mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
     && curl http://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloak-overlay-$KEYCLOAK_VERSION.tar.gz | tar xz -C $JBOSS_HOME \
     && curl http://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/adapters/keycloak-oidc/keycloak-wildfly-adapter-dist-$KEYCLOAK_VERSION.tar.gz | tar xz -C $JBOSS_HOME \
-    && mkdir -p $JBOSS_HOME/modules/org/jboss/logmanager/ext/main \
-    && curl http://central.maven.org/maven2/org/jboss/logmanager/jboss-logmanager-ext/1.0.0.Alpha3/jboss-logmanager-ext-1.0.0.Alpha3.jar \
-     -o $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/jboss-logmanager-ext-1.0.0.Alpha3.jar \
+    && curl http://central.maven.org/maven2/biz/paluch/logging/logstash-gelf/$LOGSTASH_GELF_VERSION/logstash-gelf-$LOGSTASH_GELF_VERSION-logging-module.zip -O \
+    && unzip logstash-gelf-$LOGSTASH_GELF_VERSION-logging-module.zip \
+    && mv $HOME/logstash-gelf-$LOGSTASH_GELF_VERSION/biz $JBOSS_HOME/modules/biz \
+    && rmdir $HOME/logstash-gelf-$LOGSTASH_GELF_VERSION \
+    && rm logstash-gelf-$LOGSTASH_GELF_VERSION-logging-module.zip \
     && $JBOSS_HOME/bin/add-user.sh $ADMIN_USER $ADMIN_PASSWORD --silent \
-    && mkdir /docker-entrypoint.d  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d
-
-COPY jboss-logmanager-ext-module.xml $JBOSS_HOME/modules/org/jboss/logmanager/ext/main/module.xml
+    && mkdir /docker-entrypoint.d  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d \
+    && chown wildfly $JBOSS_HOME
 
 # Default configuration: can be overridden at the docker command line
 ENV JAVA_OPTS -Xms64m -Xmx512m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
