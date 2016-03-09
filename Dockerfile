@@ -1,7 +1,7 @@
 FROM java:8-jre
 
 # explicitly set user/group IDs
-RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 wildfly
+RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
 
 # grab gosu for easy step-down from root
 RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
