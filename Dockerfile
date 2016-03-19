@@ -13,8 +13,8 @@ RUN arch="$(dpkg --print-architecture)" \
     && rm /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu
 
-ENV WILDFLY_VERSION=9.0.2.Final \
-    KEYCLOAK_VERSION=1.7.0.Final \
+ENV WILDFLY_VERSION=10.0.0.Final \
+    KEYCLOAK_VERSION=1.9.1.Final \
     LOGSTASH_GELF_VERSION=1.8.0 \
     JBOSS_HOME=/opt/wildfly \
     ADMIN_USER=admin \
@@ -36,7 +36,7 @@ RUN cd $HOME \
     && chown wildfly $JBOSS_HOME
 
 # Default configuration: can be overridden at the docker command line
-ENV JAVA_OPTS -Xms64m -Xmx512m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
+ENV JAVA_OPTS -Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
 ENV WILDFLY_STANDALONE configuration deployments
 ENV WILDFLY_INIT=
 ENV WILDFLY_CHOWN $JBOSS_HOME/standalone
