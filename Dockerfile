@@ -18,7 +18,9 @@ ENV WILDFLY_VERSION=10.0.0.Final \
     LOGSTASH_GELF_VERSION=1.8.0 \
     JBOSS_HOME=/opt/wildfly \
     ADMIN_USER=admin \
-    ADMIN_PASSWORD=admin
+    ADMIN_PASSWORD=admin \
+    KEYCLOAK_ADMIN_USER=admin \
+    KEYCLOAK_ADMIN_PASSWORD=admin
 
 ENV JBOSS_LOGMANAGER_JAR=jboss-logmanager-ext-${JBOSS_LOGMANAGER_EXT_VERSION}.jar
 RUN cd $HOME \
@@ -32,6 +34,7 @@ RUN cd $HOME \
     && rmdir $HOME/logstash-gelf-$LOGSTASH_GELF_VERSION \
     && rm logstash-gelf-$LOGSTASH_GELF_VERSION-logging-module.zip \
     && $JBOSS_HOME/bin/add-user.sh $ADMIN_USER $ADMIN_PASSWORD --silent \
+    && $JBOSS_HOME/bin/add-user-keycloak.sh -r master -u $KEYCLOAK_ADMIN_USER -p $KEYCLOAK_ADMIN_PASSWORD \
     && mkdir /docker-entrypoint.d  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d \
     && chown wildfly $JBOSS_HOME
 
