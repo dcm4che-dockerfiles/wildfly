@@ -21,7 +21,9 @@ if [ "$1" = 'standalone.sh' ]; then
 			chown -R wildfly:wildfly $f
 		done
 	fi
-
+	for c in $WILDFLY_WAIT_FOR; do
+		while ! nc -w 1 -z ${c/:/ }; do sleep 0.1; done
+	done
 	set -- gosu wildfly "$@"
 fi
 
