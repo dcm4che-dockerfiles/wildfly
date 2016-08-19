@@ -4,26 +4,25 @@ FROM java:8-jre
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
 
 # grab gosu for easy step-down from root
-RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
+ENV GOSU_VERSION 1.7
 RUN arch="$(dpkg --print-architecture)" \
     && set -x \
     && apt-get update \
     && apt-get install -y netcat-openbsd \
     && rm -rf /var/lib/apt/lists/* \
-    && curl -o /usr/local/bin/gosu -fSL "https://github.com/tianon/gosu/releases/download/1.3/gosu-$arch" \
-    && curl -o /usr/local/bin/gosu.asc -fSL "https://github.com/tianon/gosu/releases/download/1.3/gosu-$arch.asc" \
-    && gpg --verify /usr/local/bin/gosu.asc \
-    && rm /usr/local/bin/gosu.asc \
-    && chmod +x /usr/local/bin/gosu
+    && curl -o /usr/local/bin/gosu -fSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$arch" \
+    && curl -o /usr/local/bin/gosu.asc -fSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$arch.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true
 
 ENV WILDFLY_VERSION=10.0.0.Final \
-    KEYCLOAK_VERSION=1.9.1.Final \
-    LOGSTASH_GELF_VERSION=1.8.0 \
-    JBOSS_HOME=/opt/wildfly \
-    ADMIN_USER=admin \
-    ADMIN_PASSWORD=admin \
-    KEYCLOAK_ADMIN_USER=admin \
-    KEYCLOAK_ADMIN_PASSWORD=admin
+    KEYCLOAK_VERSION=2.1.0.Final \
+    LOGSTASH_GELF_VERSION=1.10.0 \
+    JBOSS_HOME=/opt/wildfly
 
 ENV JBOSS_LOGMANAGER_JAR=jboss-logmanager-ext-${JBOSS_LOGMANAGER_EXT_VERSION}.jar
 RUN cd $HOME \
@@ -36,13 +35,16 @@ RUN cd $HOME \
     && mv $HOME/logstash-gelf-$LOGSTASH_GELF_VERSION/biz $JBOSS_HOME/modules/biz \
     && rmdir $HOME/logstash-gelf-$LOGSTASH_GELF_VERSION \
     && rm logstash-gelf-$LOGSTASH_GELF_VERSION-logging-module.zip \
-    && $JBOSS_HOME/bin/add-user.sh $ADMIN_USER $ADMIN_PASSWORD --silent \
-    && $JBOSS_HOME/bin/add-user-keycloak.sh -r master -u $KEYCLOAK_ADMIN_USER -p $KEYCLOAK_ADMIN_PASSWORD \
     && mkdir /docker-entrypoint.d  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d \
     && chown wildfly $JBOSS_HOME
 
 # Default configuration: can be overridden at the docker command line
-ENV JAVA_OPTS -Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
+ENV WILDFLY_ADMIN_USER=admin \
+    WILDFLY_ADMIN_PASSWORD=admin \
+    KEYCLOAK_ADMIN_USER=admin \
+    KEYCLOAK_ADMIN_PASSWORD=admin \
+    JAVA_OPTS="-Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true"
+
 ENV WILDFLY_STANDALONE configuration deployments
 ENV WILDFLY_INIT=
 ENV WILDFLY_CHOWN $JBOSS_HOME/standalone
