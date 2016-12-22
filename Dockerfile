@@ -20,7 +20,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && gosu nobody true
 
 ENV WILDFLY_VERSION=10.1.0.Final \
-    KEYCLOAK_VERSION=2.2.1.Final \
+    KEYCLOAK_VERSION=2.4.0.Final \
     LOGSTASH_GELF_VERSION=1.10.0 \
     JBOSS_HOME=/opt/wildfly
 
@@ -39,10 +39,10 @@ RUN cd $HOME \
     && chown wildfly $JBOSS_HOME
 
 # Default configuration: can be overridden at the docker command line
-ENV WILDFLY_ADMIN_USER=admin \
-    WILDFLY_ADMIN_PASSWORD=admin \
-    KEYCLOAK_ADMIN_USER=admin \
-    KEYCLOAK_ADMIN_PASSWORD=admin \
+ENV WILDFLY_ADMIN_USER= \
+    WILDFLY_ADMIN_PASSWORD= \
+    KEYCLOAK_ADMIN_USER= \
+    KEYCLOAK_ADMIN_PASSWORD= \
     JAVA_OPTS="-Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true"
 
 ENV WILDFLY_STANDALONE configuration deployments

@@ -8,8 +8,12 @@ if [ "$1" = 'standalone.sh' ]; then
 			echo "cp -r /docker-entrypoint.d/$f $JBOSS_HOME/standalone"
 			cp -r /docker-entrypoint.d/$f $JBOSS_HOME/standalone
 			if [ "$f" = 'configuration' ]; then
-				$JBOSS_HOME/bin/add-user.sh $WILDFLY_ADMIN_USER $WILDFLY_ADMIN_PASSWORD --silent
-				$JBOSS_HOME/bin/add-user-keycloak.sh -r master -u $KEYCLOAK_ADMIN_USER -p $KEYCLOAK_ADMIN_PASSWORD
+				if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ]; then
+					$JBOSS_HOME/bin/add-user.sh $WILDFLY_ADMIN_USER $WILDFLY_ADMIN_PASSWORD --silent
+				fi
+				if [ -n "$KEYCLOAK_ADMIN_USER" -a -n "$KEYCLOAK_ADMIN_PASSWORD" ]; then
+					$JBOSS_HOME/bin/add-user-keycloak.sh -r master -u $KEYCLOAK_ADMIN_USER -p $KEYCLOAK_ADMIN_PASSWORD
+				fi
 			fi
 			chown -R wildfly:wildfly $JBOSS_HOME/standalone/$f
 		fi
