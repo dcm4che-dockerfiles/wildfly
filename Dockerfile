@@ -20,29 +20,28 @@ RUN arch="$(dpkg --print-architecture)" \
     && gosu nobody true
 
 ENV WILDFLY_VERSION=10.1.0.Final \
-    KEYCLOAK_VERSION=2.4.0.Final \
-    LOGSTASH_GELF_VERSION=1.10.0 \
+    KEYCLOAK_VERSION=3.2.1.Final \
+    LOGSTASH_GELF_VERSION=1.11.1 \
     JBOSS_HOME=/opt/wildfly
 
 ENV JBOSS_LOGMANAGER_JAR=jboss-logmanager-ext-${JBOSS_LOGMANAGER_EXT_VERSION}.jar
 RUN cd $HOME \
     && curl https://download.jboss.org/wildfly/$WILDFLY_VERSION/wildfly-$WILDFLY_VERSION.tar.gz | tar xz \
-    && mv $HOME/wildfly-$WILDFLY_VERSION $JBOSS_HOME \
-    && curl http://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloak-overlay-$KEYCLOAK_VERSION.tar.gz | tar xz -C $JBOSS_HOME \
+    && mv wildfly-$WILDFLY_VERSION $JBOSS_HOME \
     && curl http://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/adapters/keycloak-oidc/keycloak-wildfly-adapter-dist-$KEYCLOAK_VERSION.tar.gz | tar xz -C $JBOSS_HOME \
     && curl http://central.maven.org/maven2/biz/paluch/logging/logstash-gelf/$LOGSTASH_GELF_VERSION/logstash-gelf-$LOGSTASH_GELF_VERSION-logging-module.zip -O \
     && unzip logstash-gelf-$LOGSTASH_GELF_VERSION-logging-module.zip \
-    && mv $HOME/logstash-gelf-$LOGSTASH_GELF_VERSION/biz $JBOSS_HOME/modules/biz \
-    && rmdir $HOME/logstash-gelf-$LOGSTASH_GELF_VERSION \
+    && mv logstash-gelf-$LOGSTASH_GELF_VERSION/biz $JBOSS_HOME/modules/biz \
+    && rmdir logstash-gelf-$LOGSTASH_GELF_VERSION \
     && rm logstash-gelf-$LOGSTASH_GELF_VERSION-logging-module.zip \
     && mkdir /docker-entrypoint.d  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d \
     && chown wildfly $JBOSS_HOME
 
+COPY modules $JBOSS_HOME/modules
+
 # Default configuration: can be overridden at the docker command line
 ENV WILDFLY_ADMIN_USER= \
     WILDFLY_ADMIN_PASSWORD= \
-    KEYCLOAK_ADMIN_USER= \
-    KEYCLOAK_ADMIN_PASSWORD= \
     JAVA_OPTS="-Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true"
 
 ENV WILDFLY_STANDALONE configuration deployments
