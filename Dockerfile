@@ -37,8 +37,6 @@ RUN cd $HOME \
     && mkdir /docker-entrypoint.d  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d \
     && chown wildfly $JBOSS_HOME
 
-COPY modules $JBOSS_HOME/modules
-
 # Default configuration: can be overridden at the docker command line
 ENV WILDFLY_ADMIN_USER= \
     WILDFLY_ADMIN_PASSWORD= \
