@@ -55,9 +55,6 @@ ENV PATH $JBOSS_HOME/bin:$PATH
 
 VOLUME /opt/wildfly/standalone
 
-# Expose the ports we're interested in
-EXPOSE 8080 9990
-
 COPY docker-entrypoint.sh /
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
