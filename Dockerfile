@@ -20,7 +20,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && gosu nobody true
 
 ENV WILDFLY_VERSION=11.0.0.Final \
-    KEYCLOAK_VERSION=3.3.0.Final \
+    KEYCLOAK_VERSION=3.4.0.Final \
     LOGSTASH_GELF_VERSION=1.11.1 \
     JBOSS_HOME=/opt/wildfly
 
