@@ -19,9 +19,9 @@ RUN arch="$(dpkg --print-architecture)" \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true
 
-ENV WILDFLY_VERSION=11.0.0.Final \
-    KEYCLOAK_VERSION=3.4.0.Final \
-    LOGSTASH_GELF_VERSION=1.11.1 \
+ENV WILDFLY_VERSION=12.0.0.Final \
+    KEYCLOAK_VERSION=3.4.3.Final \
+    LOGSTASH_GELF_VERSION=1.11.2 \
     JBOSS_HOME=/opt/wildfly
 
 ENV JBOSS_LOGMANAGER_JAR=jboss-logmanager-ext-${JBOSS_LOGMANAGER_EXT_VERSION}.jar
