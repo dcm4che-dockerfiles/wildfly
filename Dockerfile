@@ -1,4 +1,4 @@
-FROM openjdk:8-jre
+FROM openjdk:8u151-jre
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
