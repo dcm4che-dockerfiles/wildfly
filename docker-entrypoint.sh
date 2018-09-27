@@ -4,42 +4,40 @@ set -e
 
 if [ "$1" = 'standalone.sh' ]; then
 
-	if [ -n "$LDAP_ROOTPASS_FILE" ] && [ -f $LDAP_ROOTPASS_FILE ]; then
-		LDAP_ROOTPASS=$(cat $LDAP_ROOTPASS_FILE)
+	if [ -f $LDAP_ROOTPASS_FILE ]; then
+		LDAP_ROOTPASS=`cat $LDAP_ROOTPASS_FILE`
+	else
+		echo $LDAP_ROOTPASS > $LDAP_ROOTPASS_FILE
 	fi
 
-	if [ -n "$POSTGRES_PASSWORD_FILE" ] && [ -f $POSTGRES_PASSWORD_FILE ]; then
-		POSTGRES_PASSWORD=$(cat $POSTGRES_PASSWORD_FILE)
+	if [ -f $POSTGRES_PASSWORD_FILE ]; then
+		POSTGRES_PASSWORD=`cat $POSTGRES_PASSWORD_FILE`
+	else
+		echo $POSTGRES_PASSWORD > $POSTGRES_PASSWORD_FILE
 	fi
 
-	if [ -n "$WILDFLY_ADMIN_PASSWORD_FILE" ] && [ -f $WILDFLY_ADMIN_PASSWORD_FILE ]; then
-		WILDFLY_ADMIN_PASSWORD=$(cat $WILDFLY_ADMIN_PASSWORD_FILE)
+	if [ -f $KEYSTORE_PASSWORD_FILE ]; then
+		KEYSTORE_PASSWORD=`cat $KEYSTORE_PASSWORD_FILE`
+	else
+		echo $KEYSTORE_PASSWORD > $KEYSTORE_PASSWORD_FILE
 	fi
 
-	if [ -n "$KEYSTORE_PASSWORD_FILE" ] && [ -f $KEYSTORE_PASSWORD_FILE ]; then
-		KEYSTORE_PASSWORD=$(cat $LDA_ROOTPASS_FILE)
+	if [ -f $KEY_PASSWORD_FILE ]; then
+		KEY_PASSWORD=`cat $KEY_PASSWORD_FILE`
+	else
+		echo $KEY_PASSWORD > $KEY_PASSWORD_FILE
 	fi
 
-	if [ -n "$KEY_PASSWORD_FILE" ] && [ -f $KEY_PASSWORD_FILE ]; then
-		KEY_PASSWORD=$(cat $LDA_ROOTPASS_FILE)
-	fi
-
-	if [ -n "$TRUSTSTORE_PASSWORD_FILE" ] && [ -f $TRUSTSTORE_PASSWORD_FILE ]; then
-		TRUSTSTORE_PASSWORD=$(cat $LDA_ROOTPASS_FILE)
+	if [ -f $TRUSTSTORE_PASSWORD_FILE ]; then
+		TRUSTSTORE_PASSWORD=`cat $TRUSTSTORE_PASSWORD_FILE`
+	else
+		echo $TRUSTSTORE_PASSWORD > $TRUSTSTORE_PASSWORD_FILE
 	fi
 
 	for f in $WILDFLY_STANDALONE; do
 		if [ ! -d $JBOSS_HOME/standalone/$f ]; then
 			echo "cp -r /docker-entrypoint.d/$f $JBOSS_HOME/standalone"
 			cp -r /docker-entrypoint.d/$f $JBOSS_HOME/standalone
-			if [ "$f" = 'configuration' ]; then
-				if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ]; then
-					$JBOSS_HOME/bin/add-user.sh $WILDFLY_ADMIN_USER $WILDFLY_ADMIN_PASSWORD --silent
-				fi
-				if [ -n "$KEYCLOAK_ADMIN_USER" -a -n "$KEYCLOAK_ADMIN_PASSWORD" ]; then
-					$JBOSS_HOME/bin/add-user-keycloak.sh -r master -u $KEYCLOAK_ADMIN_USER -p $KEYCLOAK_ADMIN_PASSWORD
-				fi
-			fi
 			chown -R wildfly:wildfly $JBOSS_HOME/standalone/$f
 		fi
 	done
@@ -50,8 +48,8 @@ if [ "$1" = 'standalone.sh' ]; then
 			mv $f ${f}.done
 		fi
 	done
-	if [ ! -f /importcacerts.done ] && [ -n "$TRUSTSTORE" ]; then
-		touch /importcacerts.done
+	if [ ! -f $JAVA_HOME/lib/security/cacerts.done ]; then
+		touch $JAVA_HOME/lib/security/cacerts.done
 		keytool -importkeystore \
 			-srckeystore $JBOSS_HOME/standalone/configuration/$TRUSTSTORE -srcstorepass $TRUSTSTORE_PASSWORD \
 			-destkeystore $JAVA_HOME/lib/security/cacerts -deststorepass changeit
