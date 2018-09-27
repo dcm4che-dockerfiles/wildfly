@@ -38,7 +38,7 @@ RUN cd $HOME \
     && chown wildfly $JBOSS_HOME
 
 # Default configuration: can be overridden at the docker command line
-ENV WILDFLY_ADMIN_USER= \
+ENV WILDFLY_ADMIN_USER=admin \
     WILDFLY_ADMIN_PASSWORD= \
     JAVA_OPTS="-Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true"
 
