@@ -38,6 +38,11 @@ if [ "$1" = 'standalone.sh' ]; then
 		if [ ! -d $JBOSS_HOME/standalone/$f ]; then
 			echo "cp -r /docker-entrypoint.d/$f $JBOSS_HOME/standalone"
 			cp -r /docker-entrypoint.d/$f $JBOSS_HOME/standalone
+			if [ "$f" = 'configuration' ]; then
+				if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ]; then
+					$JBOSS_HOME/bin/add-user.sh $WILDFLY_ADMIN_USER $WILDFLY_ADMIN_PASSWORD --silent
+				fi
+			fi
 			chown -R wildfly:wildfly $JBOSS_HOME/standalone/$f
 		fi
 	done
