@@ -56,7 +56,7 @@ if [ "$1" = 'standalone.sh' ]; then
 	if [ ! -f $JAVA_HOME/lib/security/cacerts.done ]; then
 		touch $JAVA_HOME/lib/security/cacerts.done
 		keytool -importkeystore \
-			-srckeystore $JBOSS_HOME/standalone/configuration/$TRUSTSTORE -srcstorepass $TRUSTSTORE_PASSWORD \
+			-srckeystore $TRUSTSTORE -srcstorepass $TRUSTSTORE_PASSWORD \
 			-destkeystore $JAVA_HOME/lib/security/cacerts -deststorepass changeit
 	fi
 	if [ ! -f $JBOSS_HOME/standalone/chown.done ]; then
