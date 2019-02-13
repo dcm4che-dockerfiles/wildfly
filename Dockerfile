@@ -1,4 +1,4 @@
-FROM openjdk:8u151-jre
+FROM openjdk:8u181-jre
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
@@ -19,7 +19,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true
 
-ENV WILDFLY_VERSION=12.0.0.Final \
+ENV WILDFLY_VERSION=15.0.1.Final \
     KEYCLOAK_VERSION=4.6.0.Final \
     LOGSTASH_GELF_VERSION=1.12.0 \
     JBOSS_HOME=/opt/wildfly
