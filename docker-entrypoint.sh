@@ -4,34 +4,8 @@ set -e
 
 if [ "$1" = 'standalone.sh' ]; then
 
-	if [ -n $LDAP_ROOTPASS_FILE -a -f $LDAP_ROOTPASS_FILE ]; then
-		LDAP_ROOTPASS=`cat $LDAP_ROOTPASS_FILE`
-	else
-		echo $LDAP_ROOTPASS > $LDAP_ROOTPASS_FILE
-	fi
-
-	if [ -n $POSTGRES_PASSWORD_FILE -a -f $POSTGRES_PASSWORD_FILE ]; then
-		POSTGRES_PASSWORD=`cat $POSTGRES_PASSWORD_FILE`
-	else
-		echo $POSTGRES_PASSWORD > $POSTGRES_PASSWORD_FILE
-	fi
-
-	if [ -n $KEYSTORE_PASSWORD_FILE -a -f $KEYSTORE_PASSWORD_FILE ]; then
-		KEYSTORE_PASSWORD=`cat $KEYSTORE_PASSWORD_FILE`
-	else
-		echo $KEYSTORE_PASSWORD > $KEYSTORE_PASSWORD_FILE
-	fi
-
-	if [ -n $KEY_PASSWORD_FILE -a -f $KEY_PASSWORD_FILE ]; then
-		KEY_PASSWORD=`cat $KEY_PASSWORD_FILE`
-	else
-		echo $KEY_PASSWORD > $KEY_PASSWORD_FILE
-	fi
-
-	if [ -n $TRUSTSTORE_PASSWORD_FILE -a -f $TRUSTSTORE_PASSWORD_FILE ]; then
-		TRUSTSTORE_PASSWORD=`cat $TRUSTSTORE_PASSWORD_FILE`
-	else
-		echo $TRUSTSTORE_PASSWORD > $TRUSTSTORE_PASSWORD_FILE
+	if [ -f setenv.sh ]; then
+		. setenv.sh
 	fi
 
 	for f in $WILDFLY_STANDALONE; do
@@ -70,10 +44,10 @@ if [ "$1" = 'standalone.sh' ]; then
 	fi
 	for c in $WILDFLY_WAIT_FOR; do
 		echo -n "Waiting for $c ... "
-		while ! nc -w 1 -z ${c/:/ }; do sleep 0.1; done
+		while ! nc -w 1 -z ${c/:/ }; do sleep 1; done
 		echo "done"
 	done
-	set -- gosu wildfly "$@"
+	set -- gosu wildfly "$@" $SYS_PROPS
 	echo "Starting Wildfly $WILDFLY_VERSION"
 fi
 
