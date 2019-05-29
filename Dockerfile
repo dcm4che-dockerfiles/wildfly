@@ -37,13 +37,7 @@ RUN cd $HOME \
     && mkdir /docker-entrypoint.d  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d \
     && chown wildfly $JBOSS_HOME
 
-# Default configuration: can be overridden at the docker command line
-ENV WILDFLY_ADMIN_USER=admin \
-    WILDFLY_ADMIN_PASSWORD= \
-    JAVA_OPTS="-Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true"
-
 ENV WILDFLY_STANDALONE configuration deployments
-ENV WILDFLY_INIT=
 ENV WILDFLY_CHOWN $JBOSS_HOME/standalone
 
 # Ensure signals are forwarded to the JVM process correctly for graceful shutdown
