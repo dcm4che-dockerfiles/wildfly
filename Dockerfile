@@ -24,7 +24,6 @@ ENV WILDFLY_VERSION=17.0.0.Final \
     LOGSTASH_GELF_VERSION=1.13.0 \
     JBOSS_HOME=/opt/wildfly
 
-ENV JBOSS_LOGMANAGER_JAR=jboss-logmanager-ext-${JBOSS_LOGMANAGER_EXT_VERSION}.jar
 RUN cd $HOME \
     && curl https://download.jboss.org/wildfly/$WILDFLY_VERSION/wildfly-$WILDFLY_VERSION.tar.gz | tar xz \
     && mv wildfly-$WILDFLY_VERSION $JBOSS_HOME \
