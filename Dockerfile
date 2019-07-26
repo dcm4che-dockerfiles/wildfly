@@ -1,4 +1,4 @@
-FROM openjdk:11.0.3-jre-stretch
+FROM openjdk:11.0.4-jre-stretch
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
@@ -19,7 +19,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true
 
-ENV WILDFLY_VERSION=17.0.0.Final \
+ENV WILDFLY_VERSION=17.0.1.Final \
     KEYCLOAK_VERSION=6.0.1 \
     LOGSTASH_GELF_VERSION=1.13.0 \
     JBOSS_HOME=/opt/wildfly
