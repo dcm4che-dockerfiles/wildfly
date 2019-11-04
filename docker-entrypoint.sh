@@ -43,7 +43,7 @@ if [ "$1" = 'standalone.sh' ]; then
 		done
 	fi
 	for c in $WILDFLY_WAIT_FOR; do
-		echo -n "Waiting for $c ... "
+		echo "Waiting for $c ..."
 		while ! nc -w 1 -z ${c/:/ }; do sleep 1; done
 		echo "done"
 	done
