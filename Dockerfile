@@ -1,4 +1,4 @@
-FROM openjdk:13-buster
+FROM openjdk:14-buster
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
