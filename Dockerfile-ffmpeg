@@ -1,4 +1,4 @@
-FROM openjdk:11.0.7-buster
+FROM openjdk:11.0.8-buster
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
@@ -20,8 +20,8 @@ RUN arch="$(dpkg --print-architecture)" \
     && gosu nobody true
 
 ENV WILDFLY_VERSION=20.0.1.Final \
-    KEYCLOAK_VERSION=10.0.2 \
-    LOGSTASH_GELF_VERSION=1.14.0 \
+    KEYCLOAK_VERSION=11.0.0 \
+    LOGSTASH_GELF_VERSION=1.14.1 \
     JBOSS_HOME=/opt/wildfly
 
 RUN cd $HOME \
