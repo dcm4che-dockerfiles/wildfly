@@ -47,6 +47,7 @@ ENV PATH $JBOSS_HOME/bin:$PATH
 VOLUME /opt/wildfly/standalone
 
 COPY docker-entrypoint.sh /
+COPY jboss-cli.sh /opt/wildfly/bin
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
