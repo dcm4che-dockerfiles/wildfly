@@ -1,4 +1,4 @@
-FROM openjdk:11.0.10-buster
+FROM adoptopenjdk/openjdk11:debian-nightly
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
@@ -8,7 +8,9 @@ ENV GOSU_VERSION 1.12
 RUN arch="$(dpkg --print-architecture)" \
     && set -x \
     && apt-get update \
+    && apt-get install -y gnupg \
     && apt-get install -y netcat-openbsd \
+    && apt-get install -y unzip \
     && rm -rf /var/lib/apt/lists/* \
     && curl -o /usr/local/bin/gosu -fSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$arch" \
     && curl -o /usr/local/bin/gosu.asc -fSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$arch.asc" \
@@ -18,6 +20,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true
+
 
 ENV WILDFLY_VERSION=23.0.0.Final \
     KEYCLOAK_VERSION=11.0.3 \
