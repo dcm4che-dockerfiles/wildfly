@@ -1,5 +1,5 @@
 
-name: '[builder] CI for releases ffmpeg'
+name: '[builder] CI for releases'
 
 on:
     push:
