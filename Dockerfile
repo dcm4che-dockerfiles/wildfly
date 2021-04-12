@@ -1,4 +1,4 @@
-FROM openjdk:11.0.10-buster
+FROM adoptopenjdk:11.0.10_9-jdk-hotspot-focal
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
@@ -8,7 +8,7 @@ ENV GOSU_VERSION 1.12
 RUN arch="$(dpkg --print-architecture)" \
     && set -x \
     && apt-get update \
-    && apt-get install -y netcat-openbsd \
+    && apt-get install -y gnupg netcat-openbsd unzip \
     && rm -rf /var/lib/apt/lists/* \
     && curl -o /usr/local/bin/gosu -fSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$arch" \
     && curl -o /usr/local/bin/gosu.asc -fSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$arch.asc" \
