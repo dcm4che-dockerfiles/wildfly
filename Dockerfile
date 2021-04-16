@@ -19,7 +19,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true
 
-ENV WILDFLY_VERSION=23.0.0.Final \
+ENV WILDFLY_VERSION=23.0.1.Final \
     KEYCLOAK_VERSION=11.0.3 \
     LOGSTASH_GELF_VERSION=1.14.1 \
     JBOSS_HOME=/opt/wildfly
@@ -47,7 +47,7 @@ ENV PATH $JBOSS_HOME/bin:$PATH
 VOLUME /opt/wildfly/standalone
 
 COPY docker-entrypoint.sh /
-COPY jboss-cli.sh /opt/wildfly/bin
+COPY /opt/wildfly/bin
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
