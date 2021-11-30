@@ -36,14 +36,18 @@ jobs:
           key: ${{ runner.os }}-single-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-single-buildx
-
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build production image
         uses: docker/build-push-action@v2
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ./Dockerfile
-          push: false # This would be set to true in a real world deployment scenario.
+          push: true
           tags: ${{ steps.prep.outputs.tagged_image }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
@@ -87,14 +91,18 @@ jobs:
           key: ${{ runner.os }}-single-buildx-ffmpeg-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-single-buildx-ffmpeg
-
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build production image
         uses: docker/build-push-action@v2
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ./Dockerfile-ffmpeg
-          push: false # This would be set to true in a real world deployment scenario.
+          push: true
           tags: ${{ steps.prep.outputs.tagged_image }}
           cache-from: type=local,src=/tmp/.buildx-ffmpeg-cache
           cache-to: type=local,dest=/tmp/.buildx-ffmpeg-cache-new
