@@ -17,7 +17,7 @@ jobs:
         id: prep
         run: |
           TAG=$(echo $GITHUB_SHA | head -c7)
-          IMAGE="my.docker.registry/thetonio96/wildfly"
+          IMAGE="thetonio96/wildfly"
           echo ::set-output name=tagged_image::${IMAGE}:${TAG}
           echo ::set-output name=tag::${TAG}
       # This is the a separate action that sets up buildx runner
@@ -72,7 +72,7 @@ jobs:
         id: prep
         run: |
           TAG=$(echo $GITHUB_SHA | head -c7)
-          IMAGE="my.docker.registry/thetonio96/wildfly"
+          IMAGE="thetonio96/wildfly"
           echo ::set-output name=tagged_image::${IMAGE}:ffmpeg-${TAG}
           echo ::set-output name=tag::${TAG}
       # This is the a separate action that sets up buildx runner
