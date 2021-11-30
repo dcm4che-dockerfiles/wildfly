@@ -16,7 +16,7 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          TAG=$(echo $GITHUB_SHA | head -c7)
+          TAG=${GITHUB_REF#refs/*/}
           IMAGE="thetonio96/wildfly"
           echo ::set-output name=tagged_image::${IMAGE}:${TAG}
           echo ::set-output name=tag::${TAG}
@@ -80,7 +80,7 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          TAG=$(echo $GITHUB_SHA | head -c7)
+          TAG=${GITHUB_REF#refs/*/}
           IMAGE="thetonio96/wildfly"
           echo ::set-output name=tagged_image::${IMAGE}:ffmpeg-${TAG}
           echo ::set-output name=tag::${TAG}
@@ -133,3 +133,6 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-ffmpeg-cache
           mv /tmp/.buildx-ffmpeg-cache-new /tmp/.buildx-ffmpeg-cache
+
+# Document was created using the following as an example:
+# https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
