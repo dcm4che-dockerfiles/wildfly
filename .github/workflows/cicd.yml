@@ -26,9 +26,6 @@ jobs:
         uses: docker/setup-buildx-action@v1.6.0
         with:
           install: true
-
-      # Registry login step intentionally missing
-
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
@@ -51,6 +48,7 @@ jobs:
           tags: ${{ steps.prep.outputs.tagged_image }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
         # This ugly bit is necessary if you don't want your cache to grow forever
         # till it hits GitHub's limit of 5GB.
         # Temp fix
@@ -81,9 +79,6 @@ jobs:
         uses: docker/setup-buildx-action@v1.6.0
         with:
           install: true
-
-      # Registry login step intentionally missing
-
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
@@ -106,6 +101,7 @@ jobs:
           tags: ${{ steps.prep.outputs.tagged_image }}
           cache-from: type=local,src=/tmp/.buildx-ffmpeg-cache
           cache-to: type=local,dest=/tmp/.buildx-ffmpeg-cache-new
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
         # This ugly bit is necessary if you don't want your cache to grow forever
         # till it hits GitHub's limit of 5GB.
         # Temp fix
