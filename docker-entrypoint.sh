@@ -8,16 +8,29 @@ if [ "$1" = 'standalone.sh' ]; then
 		. setenv.sh
 	fi
 
-	for f in $WILDFLY_STANDALONE; do
-		if [ ! -d $JBOSS_HOME/standalone/$f ]; then
-			echo "cp -r /docker-entrypoint.d/$f $JBOSS_HOME/standalone"
-			cp -r /docker-entrypoint.d/$f $JBOSS_HOME/standalone
-			if [ "$f" = 'configuration' ]; then
-				if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ]; then
-					$JBOSS_HOME/bin/add-user.sh $WILDFLY_ADMIN_USER $WILDFLY_ADMIN_PASSWORD --silent
+	chown -c wildfly:wildfly $JBOSS_HOME/standalone
+	for d in $WILDFLY_STANDALONE_PURGE; do
+		rm -rfv $JBOSS_HOME/standalone/$d/*
+	done
+	for d in $WILDFLY_STANDALONE; do
+		if [ "$d" = 'deployments' ]; then
+			for ear in /opt/wildfly/standalone/deployments/*.ear; do
+				if [ ! -f /docker-entrypoint.d/deployments/$(basename $ear) ]; then
+					rm -fv ${ear} ${ear}.deployed
 				fi
+			done
+			for war in /opt/wildfly/standalone/deployments/*.war; do
+				if [ ! -f /docker-entrypoint.d/deployments/$(basename $war) ]; then
+					rm -fv ${war} ${war}.deployed
+				fi
+			done
+		fi
+		cp -rupv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
+		if [ "$d" = 'configuration' ]; then
+			if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ] \
+				&& tail -n1 $JBOSS_HOME/standalone/configuration/mgmt-users.properties | grep -q '^#'; then
+				$JBOSS_HOME/bin/add-user.sh $WILDFLY_ADMIN_USER $WILDFLY_ADMIN_PASSWORD --silent
 			fi
-			chown -R wildfly:wildfly $JBOSS_HOME/standalone/$f
 		fi
 	done
 	for f in $WILDFLY_INIT; do
@@ -35,13 +48,13 @@ if [ "$1" = 'standalone.sh' ]; then
 				-destkeystore $JAVA_HOME/lib/security/cacerts -deststorepass changeit
 		fi
 	fi
-	if [ ! -f $JBOSS_HOME/standalone/chown.done ]; then
-		touch $JBOSS_HOME/standalone/chown.done
-		for f in $WILDFLY_CHOWN; do
+	for f in $WILDFLY_CHOWN; do
+		if [ ! -f $f/chown.done ]; then
+			touch $f/chown.done
 			echo "chown -R wildfly:wildfly $f"
 			chown -R wildfly:wildfly $f
-		done
-	fi
+		fi
+	done
 	for c in $WILDFLY_WAIT_FOR; do
 		echo "Waiting for $c ..."
 		while ! nc -w 1 -z ${c/:/ }; do sleep 1; done

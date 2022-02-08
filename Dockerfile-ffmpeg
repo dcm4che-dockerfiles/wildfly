@@ -1,10 +1,10 @@
-FROM eclipse-temurin:11.0.13_8-jdk-focal
+FROM eclipse-temurin:11.0.14_9-jdk-focal
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
 
 # grab gosu for easy step-down from root
-ENV GOSU_VERSION 1.13
+ENV GOSU_VERSION 1.14
 RUN arch="$(dpkg --print-architecture)" \
     && set -x \
     && apt-get update \
@@ -23,7 +23,7 @@ RUN arch="$(dpkg --print-architecture)" \
 
 ENV WILDFLY_VERSION=24.0.1.Final \
     KEYCLOAK_VERSION=15.1.0 \
-    LOGSTASH_GELF_VERSION=1.14.1 \
+    LOGSTASH_GELF_VERSION=1.15.0 \
     JBOSS_HOME=/opt/wildfly
 
 RUN cd $HOME \
@@ -35,11 +35,10 @@ RUN cd $HOME \
     && mv logstash-gelf-${LOGSTASH_GELF_VERSION}/biz $JBOSS_HOME/modules/biz \
     && rmdir logstash-gelf-${LOGSTASH_GELF_VERSION} \
     && rm logstash-gelf-${LOGSTASH_GELF_VERSION}-logging-module.zip \
-    && mkdir /docker-entrypoint.d  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d \
-    && chown wildfly $JBOSS_HOME
+    && chown -R wildfly:wildfly $JBOSS_HOME \
+    && mkdir /docker-entrypoint.d  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d
 
 ENV WILDFLY_STANDALONE configuration deployments
-ENV WILDFLY_CHOWN $JBOSS_HOME/standalone
 
 # Ensure signals are forwarded to the JVM process correctly for graceful shutdown
 ENV LAUNCH_JBOSS_IN_BACKGROUND true
