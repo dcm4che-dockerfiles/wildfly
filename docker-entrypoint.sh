@@ -25,7 +25,10 @@ if [ "$1" = 'standalone.sh' ]; then
 				fi
 			done
 		fi
-		cp -rupv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
+		if grep -q $d <<<"$WILDFLY_STANDALONE_PRESERVE"
+			then cp -rnpv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
+			else cp -rupv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
+		fi
 		if [ "$d" = 'configuration' ]; then
 			if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ] \
 				&& tail -n1 $JBOSS_HOME/standalone/configuration/mgmt-users.properties | grep -q '^#'; then
