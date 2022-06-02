@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11.0.14.1_1-jdk-focal
+FROM eclipse-temurin:11.0.15_10-jdk-focal
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
@@ -22,7 +22,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && gosu nobody true
 
 ENV WILDFLY_VERSION=26.1.0.Final \
-    KEYCLOAK_VERSION=15.1.0 \
+    KEYCLOAK_VERSION=18.0.0 \
     LOGSTASH_GELF_VERSION=1.15.0 \
     JBOSS_HOME=/opt/wildfly
 
