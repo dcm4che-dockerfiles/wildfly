@@ -8,8 +8,8 @@ ENV GOSU_VERSION 1.14
 RUN arch="$(dpkg --print-architecture)" \
     && set -x \
     && apt-get update \
-    && apt-get install -y gnupg netcat-openbsd unzip \
-    && rm -rf /var/lib/apt/lists/* \
+    && apt-get install -y gnupg netcat-openbsd unzip cron \
+    && rm -rf /var/lib/apt/lists/* /etc/cron.daily/* \
     && curl -o /usr/local/bin/gosu -fSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$arch" \
     && curl -o /usr/local/bin/gosu.asc -fSL "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$arch.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
@@ -22,7 +22,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && gosu nobody true
 
 ENV WILDFLY_VERSION=24.0.1.Final \
-    KEYCLOAK_VERSION=15.1.0 \
+    KEYCLOAK_VERSION=18.0.2 \
     LOGSTASH_GELF_VERSION=1.15.0 \
     JBOSS_HOME=/opt/wildfly
 
@@ -48,6 +48,7 @@ ENV PATH $JBOSS_HOME/bin:$PATH
 VOLUME /opt/wildfly/standalone
 
 COPY docker-entrypoint.sh /
+COPY etc/cron.daily/rm-logs /etc/cron.daily
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]

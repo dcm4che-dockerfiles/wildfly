@@ -58,6 +58,7 @@ if [ "$1" = 'standalone.sh' ]; then
 			chown -R wildfly:wildfly $f
 		fi
 	done
+	[ "${WILDFLY_CRON_ENABLED-false}" != "false" ] && service cron start
 	for c in $WILDFLY_WAIT_FOR; do
 		echo "Waiting for $c ..."
 		while ! nc -w 1 -z ${c/:/ }; do sleep 1; done

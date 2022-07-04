@@ -1,0 +1,3 @@
+#!/bin/bash
+
+find /opt/wildfly/standalone/log/ -type f -mtime +${WILDFLY_LOG_RETENTION_DAYS:-7} -name 'server.log*' -execdir rm -- '{}' \;
