@@ -47,7 +47,8 @@ ENV PATH $JBOSS_HOME/bin:$PATH
 
 VOLUME /opt/wildfly/standalone
 
-COPY docker-entrypoint.sh etc /
+COPY docker-entrypoint.sh /
+COPY etc/cron.daily/rm-logs /etc/cron.daily
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
