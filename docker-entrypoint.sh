@@ -9,33 +9,32 @@ if [ "$1" = 'standalone.sh' ]; then
 	fi
 
 	chown -c wildfly:wildfly $JBOSS_HOME/standalone
-	for d in $WILDFLY_STANDALONE_PURGE; do
-		rm -rfv $JBOSS_HOME/standalone/$d/*
-	done
+  for ear in /opt/wildfly/standalone/deployments/*.ear; do
+    if [ ! -f /docker-entrypoint.d/deployments/$(basename $ear) ]; then
+      rm -fv ${ear} ${ear}.deployed
+      NEW_EAR_VERSION=1
+    fi
+  done
+  for war in /opt/wildfly/standalone/deployments/*.war; do
+    if [ ! -f /docker-entrypoint.d/deployments/$(basename $war) ]; then
+      rm -fv ${war} ${war}.deployed
+      NEW_WAR_VERSION=1
+    fi
+  done
+  if [ -n "$NEW_EAR_VERSION" -o -n "$NEW_WAR_VERSION" ] \
+    && (! grep -q configuration <<<"$WILDFLY_STANDALONE_PRESERVE"); then
+    cp -bpv /docker-entrypoint.d/configuration/*.xml $JBOSS_HOME/standalone/configuration
+  fi
 	for d in $WILDFLY_STANDALONE; do
-		if [ "$d" = 'deployments' ]; then
-			for ear in /opt/wildfly/standalone/deployments/*.ear; do
-				if [ ! -f /docker-entrypoint.d/deployments/$(basename $ear) ]; then
-					rm -fv ${ear} ${ear}.deployed
-				fi
-			done
-			for war in /opt/wildfly/standalone/deployments/*.war; do
-				if [ ! -f /docker-entrypoint.d/deployments/$(basename $war) ]; then
-					rm -fv ${war} ${war}.deployed
-				fi
-			done
-		fi
 		if grep -q $d <<<"$WILDFLY_STANDALONE_PRESERVE"
 			then cp -rnpv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
 			else cp -rupv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
 		fi
-		if [ "$d" = 'configuration' ]; then
-			if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ] \
-				&& tail -n1 $JBOSS_HOME/standalone/configuration/mgmt-users.properties | grep -q '^#'; then
-				$JBOSS_HOME/bin/add-user.sh $WILDFLY_ADMIN_USER $WILDFLY_ADMIN_PASSWORD --silent
-			fi
-		fi
 	done
+  if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ] \
+    && tail -n1 $JBOSS_HOME/standalone/configuration/mgmt-users.properties | grep -q '^#'; then
+    $JBOSS_HOME/bin/add-user.sh $WILDFLY_ADMIN_USER $WILDFLY_ADMIN_PASSWORD --silent
+  fi
 	for f in $WILDFLY_INIT; do
 		if [ -f $f ]; then
 			echo ". $f"
