@@ -9,32 +9,26 @@ if [ "$1" = 'standalone.sh' ]; then
 	fi
 
 	chown -c wildfly:wildfly $JBOSS_HOME/standalone
-  for ear in /opt/wildfly/standalone/deployments/*.ear; do
-    if [ ! -f /docker-entrypoint.d/deployments/$(basename $ear) ]; then
-      rm -fv ${ear} ${ear}.deployed
-      NEW_EAR_VERSION=1
-    fi
-  done
-  for war in /opt/wildfly/standalone/deployments/*.war; do
-    if [ ! -f /docker-entrypoint.d/deployments/$(basename $war) ]; then
-      rm -fv ${war} ${war}.deployed
-      NEW_WAR_VERSION=1
-    fi
-  done
-  if [ -n "$NEW_EAR_VERSION" -o -n "$NEW_WAR_VERSION" ] \
-    && (! grep -q configuration <<<"$WILDFLY_STANDALONE_PRESERVE"); then
-    cp -bpv /docker-entrypoint.d/configuration/*.xml $JBOSS_HOME/standalone/configuration
-  fi
+	for f in $JBOSS_HOME/standalone/deployments/*.{ear,war}; do
+		if [ -f $f -a ! -f /docker-entrypoint.d/deployments/$(basename $f) ]; then
+			rm -fv ${f} ${f}.deployed
+			OVERWRITE_CONFIGURATION=1
+		fi
+	done
+	if [ -n "$OVERWRITE_CONFIGURATION" -a -d $JBOSS_HOME/standalone/configuration ] \
+		&& (! grep -q configuration <<<"$WILDFLY_STANDALONE_PRESERVE"); then
+		cp -bpv /docker-entrypoint.d/configuration/*.xml $JBOSS_HOME/standalone/configuration
+	fi
 	for d in $WILDFLY_STANDALONE; do
 		if grep -q $d <<<"$WILDFLY_STANDALONE_PRESERVE"
 			then cp -rnpv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
 			else cp -rupv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
 		fi
 	done
-  if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ] \
-    && tail -n1 $JBOSS_HOME/standalone/configuration/mgmt-users.properties | grep -q '^#'; then
-    $JBOSS_HOME/bin/add-user.sh $WILDFLY_ADMIN_USER $WILDFLY_ADMIN_PASSWORD --silent
-  fi
+	if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ] \
+		&& tail -n1 $JBOSS_HOME/standalone/configuration/mgmt-users.properties | grep -q '^#'; then
+		$JBOSS_HOME/bin/add-user.sh $WILDFLY_ADMIN_USER $WILDFLY_ADMIN_PASSWORD --silent
+	fi
 	for f in $WILDFLY_INIT; do
 		if [ -f $f ]; then
 			echo ". $f"
