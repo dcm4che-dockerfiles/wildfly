@@ -12,15 +12,18 @@ if [ "$1" = 'standalone.sh' ]; then
 	for f in $JBOSS_HOME/standalone/deployments/*.{ear,war}; do
 		if [ -f $f -a ! -f /docker-entrypoint.d/deployments/$(basename $f) ]; then
 			rm -fv ${f} ${f}.deployed
-			OVERWRITE_CONFIGURATION=1
 		fi
 	done
-	if [ -n "$OVERWRITE_CONFIGURATION" -a -d $JBOSS_HOME/standalone/configuration ] \
-		&& (! grep -q configuration <<<"$WILDFLY_STANDALONE_PRESERVE"); then
+	if (! grep -q configuration - <<<"$WILDFLY_STANDALONE_PRESERVE") \
+	  && [ -n "$WILDFLY_CONFIGURATION_VERSION" ] \
+	  && ([ ! -f $JBOSS_HOME/standalone/configuration/VERSION ] \
+	  || (! grep -q "$WILDFLY_CONFIGURATION_VERSION" $JBOSS_HOME/standalone/configuration/VERSION)); then
+		mkdir -p $JBOSS_HOME/standalone/configuration
 		cp -bpv /docker-entrypoint.d/configuration/*.xml $JBOSS_HOME/standalone/configuration
+		cat <<<"$WILDFLY_CONFIGURATION_VERSION" > $JBOSS_HOME/standalone/configuration/VERSION
 	fi
 	for d in $WILDFLY_STANDALONE; do
-		if grep -q $d <<<"$WILDFLY_STANDALONE_PRESERVE"
+		if grep -q $d - <<<"$WILDFLY_STANDALONE_PRESERVE"
 			then cp -rnpv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
 			else cp -rupv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
 		fi
