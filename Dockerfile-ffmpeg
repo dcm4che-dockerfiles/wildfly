@@ -1,10 +1,10 @@
-FROM eclipse-temurin:11.0.17_8-jdk
+FROM eclipse-temurin:17.0.5_8-jdk
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
 
 # grab gosu for easy step-down from root
-ENV GOSU_VERSION 1.14
+ENV GOSU_VERSION 1.16
 RUN arch="$(dpkg --print-architecture)" \
     && set -x \
     && apt-get update \
@@ -22,7 +22,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && gosu nobody true
 
 ENV WILDFLY_VERSION=26.1.2.Final \
-    KEYCLOAK_VERSION=20.0.2 \
+    KEYCLOAK_VERSION=20.0.3 \
     LOGSTASH_GELF_VERSION=1.15.0 \
     JBOSS_HOME=/opt/wildfly
 
