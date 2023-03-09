@@ -23,10 +23,23 @@ if [ "$1" = 'standalone.sh' ]; then
 		cat <<<"$WILDFLY_CONFIGURATION_VERSION" > $JBOSS_HOME/standalone/configuration/VERSION
 	fi
 	for d in $WILDFLY_STANDALONE; do
-		if grep -q $d - <<<"$WILDFLY_STANDALONE_PRESERVE"
-			then cp -rnpv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
-			else cp -rupv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
-		fi
+	  if [ "$d" = "deployments" ] && [ -n "$WILDFLY_DEPLOYMENTS" ]; then
+	    if [ ! -d $JBOSS_HOME/standalone/deployments ]; then
+        mkdir $JBOSS_HOME/standalone/deployments
+        chown -c wildfly:wildfly $JBOSS_HOME/standalone/deployments
+	    fi
+	    for f in $WILDFLY_DEPLOYMENTS; do
+        if grep -q $d - <<<"$WILDFLY_STANDALONE_PRESERVE"
+          then cp -npv /docker-entrypoint.d/deployments/$f $JBOSS_HOME/standalone/deployments
+          else cp -upv /docker-entrypoint.d/deployments/$f $JBOSS_HOME/standalone/deployments
+        fi
+	    done
+	  else
+      if grep -q $d - <<<"$WILDFLY_STANDALONE_PRESERVE"
+        then cp -rnpv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
+        else cp -rupv /docker-entrypoint.d/$d $JBOSS_HOME/standalone
+      fi
+    fi
 	done
 	if [ -n "$WILDFLY_ADMIN_USER" -a -n "$WILDFLY_ADMIN_PASSWORD" ] \
 		&& tail -n1 $JBOSS_HOME/standalone/configuration/mgmt-users.properties | grep -q '^#'; then
