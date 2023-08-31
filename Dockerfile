@@ -21,15 +21,13 @@ RUN arch="$(dpkg --print-architecture)" \
     && gosu --version \
     && gosu nobody true
 
-ENV WILDFLY_VERSION=26.1.2.Final \
-    KEYCLOAK_VERSION=21.1.2 \
+ENV WILDFLY_VERSION=29.0.1.Final \
     LOGSTASH_GELF_VERSION=1.15.1 \
     JBOSS_HOME=/opt/wildfly
 
 RUN cd $HOME \
     && curl -L https://github.com/wildfly/wildfly/releases/download/$WILDFLY_VERSION/wildfly-$WILDFLY_VERSION.tar.gz | tar xz  \
     && mv wildfly-$WILDFLY_VERSION $JBOSS_HOME \
-    && curl -L https://github.com/keycloak/keycloak/releases/download/$KEYCLOAK_VERSION/keycloak-oidc-wildfly-adapter-$KEYCLOAK_VERSION.tar.gz | tar xz -C $JBOSS_HOME \
     && curl https://repo1.maven.org/maven2/biz/paluch/logging/logstash-gelf/${LOGSTASH_GELF_VERSION}/logstash-gelf-${LOGSTASH_GELF_VERSION}-logging-module.zip -O \
     && unzip logstash-gelf-${LOGSTASH_GELF_VERSION}-logging-module.zip \
     && mv logstash-gelf-${LOGSTASH_GELF_VERSION}/biz $JBOSS_HOME/modules/biz \
