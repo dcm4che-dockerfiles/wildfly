@@ -73,7 +73,7 @@ if [ "$1" = 'standalone.sh' ]; then
 		while ! nc -w 1 -z ${c/:/ }; do sleep 1; done
 		echo "done"
 	done
-	set -- gosu wildfly "$@" $SYS_PROPS
+	set -- chroot --userspec=wildfly:wildfly / "$@" $SYS_PROPS
 	echo "Starting Wildfly $WILDFLY_VERSION"
 fi
 
