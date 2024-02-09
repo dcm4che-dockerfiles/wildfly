@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17.0.9_9-jdk
+FROM eclipse-temurin:17.0.10_7-jdk
 
 # explicitly set user/group IDs
 RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
@@ -9,7 +9,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && apt-get install -y gnupg netcat-openbsd unzip cron ffmpeg \
     && rm -rf /var/lib/apt/lists/* /etc/cron.daily/*
 
-ENV WILDFLY_VERSION=30.0.1.Final \
+ENV WILDFLY_VERSION=31.0.0.Final \
     LOGSTASH_GELF_VERSION=1.15.1 \
     JBOSS_HOME=/opt/wildfly
 
