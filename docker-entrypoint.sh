@@ -5,7 +5,7 @@ set -e
 if [ "$1" = 'standalone.sh' ]; then
 
 	if [ -f setenv.sh ]; then
-		. setenv.sh
+		. /setenv.sh
 	fi
 
 	chown -c wildfly:wildfly $JBOSS_HOME/standalone
