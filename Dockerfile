@@ -9,7 +9,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && apt-get install -y gnupg netcat-openbsd unzip cron \
     && rm -rf /var/lib/apt/lists/* /etc/cron.daily/*
 
-ENV WILDFLY_VERSION=32.0.0.Final \
+ENV WILDFLY_VERSION=32.0.1.Final \
     LOGSTASH_GELF_VERSION=1.15.1 \
     JBOSS_HOME=/opt/wildfly
 

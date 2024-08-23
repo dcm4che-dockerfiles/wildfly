@@ -1,13 +1,11 @@
-FROM azul/zulu-openjdk:21.0.3-jdk
+FROM amazoncorretto:17.0.12
 
-# explicitly set user/group IDs
-RUN groupadd -r wildfly --gid=1023 && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
-
-RUN arch="$(dpkg --print-architecture)" \
-    && set -x \
-    && apt-get update \
-    && apt-get install -y curl gnupg netcat-openbsd unzip cron ffmpeg \
-    && rm -rf /var/lib/apt/lists/* /etc/cron.daily/*
+RUN arch="amd64" \
+    && set -eux \
+    && yum install -y shadow-utils nmap-ncat tar gzip unzip \
+    && yum clean all \
+    && groupadd -r wildfly --gid=1023 \
+    && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
 
 ENV WILDFLY_VERSION=32.0.1.Final \
     LOGSTASH_GELF_VERSION=1.15.1 \
