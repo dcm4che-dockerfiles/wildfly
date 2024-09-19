@@ -1,4 +1,4 @@
-FROM azul/prime:21.0.2-13-24.03.0.0
+FROM azul/prime:21.0.4-4-24.08.0.0
 
 # reset azul/prime working directory: /opt/zing
 WORKDIR /
@@ -12,7 +12,7 @@ RUN arch="$(dpkg --print-architecture)" \
     && apt-get install -y curl gnupg netcat-openbsd unzip cron ffmpeg \
     && rm -rf /var/lib/apt/lists/* /etc/cron.daily/*
 
-ENV WILDFLY_VERSION=32.0.1.Final \
+ENV WILDFLY_VERSION=33.0.2.Final \
     LOGSTASH_GELF_VERSION=1.15.1 \
     JBOSS_HOME=/opt/wildfly
 

@@ -1,4 +1,4 @@
-FROM amazoncorretto:21.0.3
+FROM amazoncorretto:21.0.4
 
 RUN arch="amd64" \
     && set -eux \
@@ -7,7 +7,7 @@ RUN arch="amd64" \
     && groupadd -r wildfly --gid=1023 \
     && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
 
-ENV WILDFLY_VERSION=32.0.1.Final \
+ENV WILDFLY_VERSION=33.0.2.Final \
     LOGSTASH_GELF_VERSION=1.15.1 \
     JBOSS_HOME=/opt/wildfly
 

@@ -1,4 +1,4 @@
-FROM amazoncorretto:21.0.3
+FROM amazoncorretto:21.0.4
 
 RUN arch="amd64" \
     && set -eux \
@@ -12,7 +12,7 @@ RUN arch="amd64" \
     && cd .. && rmdir ffmpeg \
     && ln -s /opt/ffmpeg/ffmpeg /usr/bin/ffmpeg
 
-ENV WILDFLY_VERSION=32.0.1.Final \
+ENV WILDFLY_VERSION=33.0.2.Final \
     LOGSTASH_GELF_VERSION=1.15.1 \
     JBOSS_HOME=/opt/wildfly
 
