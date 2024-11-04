@@ -1,18 +1,12 @@
-FROM amazoncorretto:21.0.4
+FROM amazoncorretto:17.0.13-al2023
 
-RUN arch="amd64" \
-    && set -eux \
+RUN set -eux \
     && yum install -y shadow-utils nmap-ncat tar gzip unzip xz \
     && yum clean all \
     && groupadd -r wildfly --gid=1023 \
-    && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly \
-    && mkdir ffmpeg && cd ffmpeg \
-    && curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-${arch}-static.tar.xz | tar xJ \
-    && mv $(ls) /opt/ffmpeg \
-    && cd .. && rmdir ffmpeg \
-    && ln -s /opt/ffmpeg/ffmpeg /usr/bin/ffmpeg
+    && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
 
-ENV WILDFLY_VERSION=33.0.2.Final \
+ENV WILDFLY_VERSION=34.0.0.Final \
     LOGSTASH_GELF_VERSION=1.15.1 \
     JBOSS_HOME=/opt/wildfly
 
@@ -27,17 +21,16 @@ RUN cd $HOME \
     && chown -R wildfly:wildfly $JBOSS_HOME \
     && mkdir /docker-entrypoint.d  && mv $JBOSS_HOME/standalone/* /docker-entrypoint.d
 
-ENV WILDFLY_STANDALONE configuration deployments
+ENV WILDFLY_STANDALONE="configuration deployments"
 
 # Ensure signals are forwarded to the JVM process correctly for graceful shutdown
-ENV LAUNCH_JBOSS_IN_BACKGROUND true
+ENV LAUNCH_JBOSS_IN_BACKGROUND=1
 
-ENV PATH $JBOSS_HOME/bin:$PATH
+ENV PATH="$JBOSS_HOME/bin:$PATH"
 
 VOLUME /opt/wildfly/standalone
 
 COPY docker-entrypoint.sh /
-COPY etc/cron.daily/rm-logs /etc/cron.daily
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]

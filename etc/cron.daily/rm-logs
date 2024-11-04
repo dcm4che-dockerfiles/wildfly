@@ -1,4 +1,0 @@
-#!/bin/bash
-
-find /opt/wildfly/standalone/log/ -type f -mtime +${WILDFLY_SERVER_LOG_RETENTION_DAYS:-7} -name 'server.log*' -execdir rm -- '{}' \;
-find /opt/wildfly/standalone/log/ -type f -mtime +${WILDFLY_AUDIT_LOG_RETENTION_DAYS:-7} -name 'audit.log*' -execdir rm -- '{}' \;
