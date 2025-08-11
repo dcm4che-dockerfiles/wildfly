@@ -72,6 +72,7 @@ if [ "$1" = 'standalone.sh' ]; then
 		while ! nc -w 1 -z ${c/:/ }; do sleep 1; done
 		echo "done"
 	done
+	if [ "$WILDFLY_START_DELAY" ]; then sleep $WILDFLY_START_DELAY; fi
 	set -- chroot --userspec=wildfly:wildfly / "$@" $SYS_PROPS
 	echo "Starting Wildfly $WILDFLY_VERSION"
 fi
