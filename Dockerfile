@@ -1,4 +1,4 @@
-FROM amazoncorretto:21.0.7-al2023
+FROM amazoncorretto:21.0.8-al2023
 
 RUN set -eux \
     && yum install -y findutils shadow-utils nmap-ncat tar gzip unzip xz \
@@ -6,7 +6,7 @@ RUN set -eux \
     && groupadd -r wildfly --gid=1023 \
     && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
 
-ENV WILDFLY_VERSION=36.0.1.Final \
+ENV WILDFLY_VERSION=37.0.0.Final \
     LOGSTASH_GELF_VERSION=1.15.1 \
     JBOSS_HOME=/opt/wildfly
 
