@@ -1,7 +1,7 @@
 FROM amazoncorretto:17.0.16-al2023
 
 RUN set -eux \
-    && yum install -y findutils shadow-utils nmap-ncat tar gzip unzip xz \
+    && yum install -y bind-utils findutils shadow-utils nmap-ncat tar gzip unzip xz \
     && yum clean all \
     && groupadd -r wildfly --gid=1023 \
     && useradd -r -g wildfly --uid=1023 -d /opt/wildfly wildfly
