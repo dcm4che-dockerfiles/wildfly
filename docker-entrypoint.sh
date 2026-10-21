@@ -8,6 +8,10 @@ if [ "$1" = 'standalone.sh' ]; then
 		. /setenv.sh
 	fi
 
+	if [ -z "$TZ" ] && [ -f /etc/timezone ]; then
+		export TZ=$(cat /etc/timezone)
+	fi
+
 	chown -c wildfly:wildfly $JBOSS_HOME/standalone
 	for f in $JBOSS_HOME/standalone/deployments/*.{ear,war}; do
 		if [ -f $f -a ! -f /docker-entrypoint.d/deployments/$(basename $f) ]; then
