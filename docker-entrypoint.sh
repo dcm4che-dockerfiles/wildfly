@@ -63,6 +63,7 @@ if [ "$1" = 'standalone.sh' ]; then
 				-srckeystore $EXTRA_CACERTS -srcstorepass $EXTRA_CACERTS_PASSWORD \
 				-destkeystore $JAVA_HOME/lib/security/cacerts -deststorepass changeit
 		fi
+		keytool -delete -cacerts -storepass changeit -alias "emsigneccrootca-g3"
 	fi
 	for f in $WILDFLY_CHOWN; do
 		if [ ! -f $f/chown.done ]; then

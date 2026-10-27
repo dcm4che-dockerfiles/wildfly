@@ -1,4 +1,4 @@
-FROM amazoncorretto:21.0.12-al2023
+FROM amazoncorretto:21.0.13-al2023
 
 RUN set -eux \
     && yum install -y bind-utils iproute findutils shadow-utils nmap-ncat tar gzip unzip xz \
